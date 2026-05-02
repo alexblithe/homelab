@@ -1,0 +1,9 @@
+dependencies:
+- name: cert-manager
+  repository: oci://quay.io/jetstack/charts
+  version: v1.20.1
+- name: rancher
+  repository: https://releases.rancher.com/server-charts/latest
+  version: 2.13.3
+digest: sha256:57e8a6cdd42b212e6102680e762f807503a09c8a50aa2d5ad1d8276a294ce1dd
+generated: "2026-04-11T11:35:14.522343-04:00"
