@@ -1,7 +1,3 @@
-cert-manager: 
-  namespace: cert-manager
-  enabled: true
-
 rancher:
   namespace: cattle-system
   enabled: true
