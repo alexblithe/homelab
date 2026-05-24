@@ -3,3 +3,6 @@
 
 # Chart deps
 **/charts/*.tgz
+
+# Decrypted secrets
+secrets*.yaml.dec
