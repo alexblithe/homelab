@@ -1,12 +1,12 @@
 keys:
-    - &desktop-key age10n49wavc547hh36jhvhg2dehn68vlp38v5jlwf5s6pelrjd4v57symt274
-    - &macbook-key age1qqw5xfh44mz2s4yacr989elxvwgkzpl3l0dwt4a8y6smqj2xycvs3svtcn
-    - &luna age13fk0y8df50wdvpkwu3yf2jdhz6kl74rfvlwvg4p3v6e5hg7negkslfy689
+  - &desktop-key age10n49wavc547hh36jhvhg2dehn68vlp38v5jlwf5s6pelrjd4v57symt274
+  - &macbook-key age1qqw5xfh44mz2s4yacr989elxvwgkzpl3l0dwt4a8y6smqj2xycvs3svtcn
+  - &luna age13fk0y8df50wdvpkwu3yf2jdhz6kl74rfvlwvg4p3v6e5hg7negkslfy689
 
 creation_rules:
-    - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
-      key_groups:
-          - age:
-                - *desktop-key
-                - *macbook-key
-                - *luna
+  - path_regex: .*/secrets.yaml$
+    key_groups:
+      - age:
+          - *desktop-key
+          - *macbook-key
+          - *luna
