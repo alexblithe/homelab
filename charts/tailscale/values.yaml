@@ -1,7 +1,3 @@
-tailscale-operator:
-  oauthSecretVolume:
-    secret:
-      secretName: tailscale-operator-auth
-
 # Install cmd
-# helm install tailscale charts/tailscale --namespace=tailscale --create-namespace --wait
+# helm secrets install tailscale charts/tailscale --namespace=tailscale --create-namespace --wait
+
