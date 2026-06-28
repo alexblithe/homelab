@@ -1,2 +1,0 @@
-# Install cmd
-# helm secrets install tailscale charts/tailscale --namespace=tailscale --create-namespace --wait  -f charts/tailscale/secrets.yaml

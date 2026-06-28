@@ -4,7 +4,7 @@ keys:
   - &luna age13fk0y8df50wdvpkwu3yf2jdhz6kl74rfvlwvg4p3v6e5hg7negkslfy689
 
 creation_rules:
-  - path_regex: .*/secrets.yaml$
+  - path_regex: environments/.*/secrets\.yaml.*$
     key_groups:
       - age:
           - *desktop-key
