@@ -10,7 +10,7 @@ repositories:
 ---
 
 environments: 
-  default:
+  luna:
     secrets:
       - environments/luna/secrets.yaml
     values:
@@ -22,6 +22,15 @@ environments:
             extraAnnotations:
               tailscale.com/proxy-group: ingress-proxies
             ingressClassName: tailscale
+  localhost:
+    secrets:
+      - environments/localhost/secrets.yaml
+    values:
+      - rancher:
+          hostname: rancher.localhost
+          replicas: 1
+          ingress:
+            enabled: true
 
 
 ---

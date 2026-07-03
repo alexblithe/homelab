@@ -1,0 +1,25 @@
+repositories:
+  - name: nvdp
+    url: https://nvidia.github.io/k8s-device-plugin
+  - name: nfd
+    oci: true
+    url: registry.k8s.io/nfd/charts
+
+---
+
+releases:
+  - name: nvidia-device-plugin
+    chart: nvdp/nvidia-device-plugin
+    namespace: nvidia-device-plugin
+    version: "0.19.3"
+    cleanupOnFail: true
+    createNamespace: true
+    wait: true
+    waitForJobs: true
+    values:
+      - gfd:
+          enabled: true
+        nfd:
+          enabled: true
+        runtimeClassName: nvidia
+        deviceIDStrategy: index
