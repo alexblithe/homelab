@@ -2,7 +2,34 @@ suite: ingress proxy group
 templates:
   - templates/ingress-proxy-group.yaml
 tests:
-  - it: should render a ProxyGroup resource
+  - it: should render correct ProxyGroup with defaults
     asserts:
       - isKind:
           of: ProxyGroup
+      - isAPIVersion:
+          of: tailscale.com/v1alpha1
+      - equal:
+          path: metadata.name
+          value: ingress-proxies
+      - equal:
+          path: spec.type
+          value: ingress
+      - equal:
+          path: spec.replicas
+          value: 1
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+
+  - it: should allow overriding name and replicas
+    set:
+      proxyGroup:
+        name: custom-proxies
+        replicas: 3
+    asserts:
+      - equal:
+          path: metadata.name
+          value: custom-proxies
+      - equal:
+          path: spec.replicas
+          value: 3

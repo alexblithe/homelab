@@ -29,3 +29,5 @@
 - **Nix**: Used to manage the development environment for the homelab.
 - **TestContainers**: Used to run integration tests for the homelab against a temporary k3d cluster.
 
+# Sandbox command execution
+- The agent sandbox does **not** auto-activate direnv. All commands must be prefixed with `direnv exec .` to load the nix devShell. Example: `direnv exec . make test-helm`.

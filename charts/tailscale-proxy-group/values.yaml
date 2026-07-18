@@ -1,0 +1,3 @@
+proxyGroup:
+  name: ingress-proxies
+  replicas: 1
