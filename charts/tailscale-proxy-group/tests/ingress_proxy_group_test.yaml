@@ -1,0 +1,8 @@
+suite: ingress proxy group
+templates:
+  - templates/ingress-proxy-group.yaml
+tests:
+  - it: should render a ProxyGroup resource
+    asserts:
+      - isKind:
+          of: ProxyGroup

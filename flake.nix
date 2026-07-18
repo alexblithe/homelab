@@ -13,6 +13,7 @@
                 helm-secrets
                 helm-diff
                 helm-s3
+                helm-unittest
               ];
             };
           })
@@ -32,6 +33,9 @@
           nil
 	        k9s
           sops
+          k3d
+          python3
+          pyrefly
         ];
       };
     }

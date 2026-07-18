@@ -1,6 +1,12 @@
 # Nix
 .direnv/
 
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+
 # Chart deps
 **/charts/*.tgz
 
