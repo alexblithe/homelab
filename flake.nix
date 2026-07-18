@@ -30,6 +30,7 @@
           kubernetes-helm-wrapped
           helmfile-wrapped 
           nixd
+          act
           nil
 	        k9s
           sops

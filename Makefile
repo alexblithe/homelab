@@ -54,6 +54,14 @@ format-pytest:
 	fi
 	$(VENV_DIR)/bin/ruff format tests/ 
 
+lint-helm:
+	@for chart_dir in charts/*/; do \
+		if [ -f "$$chart_dir/Chart.yaml" ]; then \
+			echo "==> Linting $$(basename $$chart_dir)..."; \
+			helm lint "$$chart_dir"; \
+		fi; \
+	done
+
 test-helm:
 	@for chart_dir in charts/*/; do \
 		if [ -d "$$chart_dir/tests" ]; then \
