@@ -1,8 +1,8 @@
 apiVersion: tailscale.com/v1alpha1
 kind: ProxyGroup
 metadata:
-  name: ingress-proxies
+  name: {{ .Values.proxyGroup.name }}
   namespace: {{ .Release.Namespace }}
 spec:
   type: ingress
-  replicas: 1
+  replicas: {{ .Values.proxyGroup.replicas }}

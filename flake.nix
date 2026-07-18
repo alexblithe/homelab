@@ -13,6 +13,7 @@
                 helm-secrets
                 helm-diff
                 helm-s3
+                helm-unittest
               ];
             };
           })
@@ -29,9 +30,13 @@
           kubernetes-helm-wrapped
           helmfile-wrapped 
           nixd
+          act
           nil
 	        k9s
           sops
+          k3d
+          python3
+          pyrefly
         ];
       };
     }

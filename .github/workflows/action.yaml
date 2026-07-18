@@ -1,0 +1,41 @@
+name: Test Homelab
+
+on: [push]
+
+jobs:
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v5
+        with:
+          version: "latest"
+        id: install
+      - name: Install helm-unittest
+
+        run: |
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git --verify=false
+
+      - name: Lint charts
+        run: make lint-helm
+      - name: Test charts
+        run: make test-helm
+
+  python-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Run ruff
+        run: ruff check tests/
+
+      - name: Run tests
+        run: pytest tests/ -v
