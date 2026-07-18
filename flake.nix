@@ -4,7 +4,21 @@
   };
   outputs = { self, nixpkgs, utils }: utils.lib.eachDefaultSystem (system:
     let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          (final: prev: {
+            kubernetes-helm-wrapped = prev.wrapHelm prev.kubernetes-helm {
+              plugins = with prev.kubernetes-helmPlugins; [
+                helm-secrets
+                helm-diff
+                helm-s3
+              ];
+            };
+          })
+        ];
+      };
+
     in
     {
       devShell = pkgs.mkShell {
@@ -12,7 +26,12 @@
           kubectl
           kustomize
           yq
+          kubernetes-helm-wrapped
+          helmfile-wrapped 
           nixd
+          nil
+	        k9s
+          sops
         ];
       };
     }
