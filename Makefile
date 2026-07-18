@@ -10,7 +10,7 @@ help:
 	@echo "  install     Install project dependencies into venv"
 	@echo "  clean       Remove venv and all caches"
 	@echo "  test        Run all tests (helm + pytest)"
-	@echo "  test-unit   Run pytest tests"
+	@echo "  test-pytest   Run pytest tests"
 	@echo "  test-helm   Run helm-unittest chart template tests"
 
 venv:
@@ -31,14 +31,28 @@ install: venv
 clean:
 	rm -rf $(VENV_DIR) __pycache__ .pytest_cache tests/__pycache__
 
-test: test-helm test-unit
+test: test-helm test-pytest
 
-test-unit: install
+test-pytest:
 	@if [ ! -f "$(VENV_DIR)/bin/pytest" ]; then \
 		echo "Error: pytest not found. Run 'make install' first."; \
 		exit 1; \
 	fi
 	$(VENV_DIR)/bin/pytest tests/ -v
+
+lint-pytest:
+	@if [ ! -f "$(VENV_DIR)/bin/ruff" ]; then \
+		echo "Error: ruff not found. Run 'make install' first."; \
+		exit 1; \
+	fi
+	$(VENV_DIR)/bin/ruff check tests/
+
+format-pytest:
+	@if [ ! -f "$(VENV_DIR)/bin/ruff" ]; then \
+		echo "Error: ruff not found. Run 'make install' first."; \
+		exit 1; \
+	fi
+	$(VENV_DIR)/bin/ruff format tests/ 
 
 test-helm:
 	@for chart_dir in charts/*/; do \
