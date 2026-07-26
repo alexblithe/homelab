@@ -7,6 +7,8 @@ repositories:
     url: "https://charts.jetstack.io"
   - name: rancher
     url: "https://releases.rancher.com/server-charts/stable"
+  - name: open-webui
+    url: "https://helm.openwebui.com/"
 ---
 
 environments: 
@@ -73,4 +75,19 @@ releases:
           enabled: {{ .Values.rancher.ingress.enabled }}
           extraAnnotations: {{ .Values.rancher.ingress.extraAnnotations | toYaml | nindent 12 }}
           ingressClassName: {{ .Values.rancher.ingress.ingressClassName | quote }}
-
+  - name: openwebui
+    namespace: openwebui
+    chart: open-webui/open-webui
+    createNamespace: true
+    version: 15.2.0
+    values:
+      - ollama:
+          enabled: false
+      - pipelines:
+          enabled: false
+      - ingress:
+          enabled: true
+          class: tailscale
+          annotations:
+            tailscale.com/proxy-group: ingress-proxies
+      
