@@ -35,8 +35,7 @@
 	        k9s
           sops
           k3d
-          python3
-          pyrefly
+          go
         ];
       };
     }

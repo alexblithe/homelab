@@ -20,22 +20,13 @@ jobs:
         run: make lint-helm
       - name: Test charts
         run: make test-helm
-
-  python-test:
+  go-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v6
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          python-version: "3.13"
-          cache: "pip"
-
-      - name: Install dependencies
-        run: pip install -e .
-
-      - name: Run ruff
-        run: ruff check tests/
-
+          go-version: 1.26
       - name: Run tests
-        run: pytest tests/ -v
+        run: make test-go
