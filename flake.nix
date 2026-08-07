@@ -35,7 +35,9 @@
 	        k9s
           sops
           k3d
-          go
+          go          # The Go compiler and tools
+          gopls       # Go language server for IDE support
+          gotools     # Contains godoc, goimports, etc.
         ];
       };
     }

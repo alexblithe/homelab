@@ -1,0 +1,22 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: searxng-env
+  namespace: {{ .Release.Namespace }}
+data:
+  SEARXNG_HOST: {{ .Values.searxng.host | quote }}
+  SEARXNG_PORT: {{ .Values.service.port | quote }}
+  SEARXNG_VERSION: {{ .Chart.AppVersion | quote }}
+
+
+---
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: searxng-config
+  namespace: {{ .Release.Namespace }}
+data:
+  settings.yml: |-
+    # SearXNG settings file
+    {{- toYaml .Values.searxng.settings | nindent 4 }}
