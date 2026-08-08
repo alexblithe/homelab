@@ -47,6 +47,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: searxng-env
+          env:
+            - name: SEARXNG_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "searxng.secretName" . }}
+                  key: SEARXNG_SECRET
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -59,14 +65,21 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - name: searxng-config
+              mountPath: /etc/searxng/settings.yml
+              subPath: settings.yml
+              readOnly: true
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
+        - name: searxng-config
+          configMap:
+            name: searxng-config
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

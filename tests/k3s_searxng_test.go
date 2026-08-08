@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	"helm.sh/helm/v4/pkg/action"
@@ -19,7 +21,8 @@ func TestInstallK3sSearxNG(t *testing.T) {
 			Name: "test-searxng",
 		},
 	}, metav1.CreateOptions{})
-	go InstallLogger(t.Context(), t, env.client, "test-searxng")
+	logger := log.New(os.Stdout, "", log.LstdFlags)
+	go InstallLogger(t.Context(), t, env.client, "test-searxng", logger)
 
 	namespace := "test-searxng"
 	cfgFlags := &genericclioptions.ConfigFlags{

@@ -1,0 +1,45 @@
+suite: SearXNG deployment
+templates:
+  - templates/deployment.yaml
+tests:
+  - it: should mount settings.yml from searxng-config ConfigMap
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: kind
+          value: Deployment
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: searxng-config
+            configMap:
+              name: searxng-config
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: searxng-config
+            mountPath: /etc/searxng/settings.yml
+            subPath: settings.yml
+            readOnly: true
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SEARXNG_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: RELEASE-NAME-searxng-secret
+                key: SEARXNG_SECRET
+
+  - it: should use an existing Secret when configured
+    set:
+      existingSecret: external-searxng-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SEARXNG_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: external-searxng-secret
+                key: SEARXNG_SECRET

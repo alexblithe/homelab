@@ -1,0 +1,27 @@
+suite: SearXNG config
+templates:
+  - templates/configmaps.yaml
+tests:
+  - it: should create searxng-config ConfigMap with settings
+    set:
+      searxng:
+        settings:
+          use_default_settings: true
+          search:
+            languages: en
+    documentSelector:
+      path: metadata.name
+      value: searxng-config
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: kind
+          value: ConfigMap
+      - equal:
+          path: data["settings.yml"]
+          value: |-
+            # SearXNG settings file
+            search:
+              languages: en
+            use_default_settings: true
