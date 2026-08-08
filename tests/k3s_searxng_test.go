@@ -22,7 +22,8 @@ func TestInstallK3sSearxNG(t *testing.T) {
 		},
 	}, metav1.CreateOptions{})
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	go InstallLogger(t.Context(), t, env.client, "test-searxng", logger)
+	namespaceLogger := NewNamespaceLogger(env.client, "test-searxng", logger)
+	go namespaceLogger.Start(t.Context())
 
 	namespace := "test-searxng"
 	cfgFlags := &genericclioptions.ConfigFlags{
