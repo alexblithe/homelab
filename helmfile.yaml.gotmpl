@@ -9,6 +9,8 @@ repositories:
     url: "https://releases.rancher.com/server-charts/stable"
   - name: open-webui
     url: "https://helm.openwebui.com/"
+  - name: cnpg
+    url: "https://cloudnative-pg.github.io/charts"
 ---
 
 environments: 
@@ -16,6 +18,8 @@ environments:
     secrets:
       - environments/luna/secrets.yaml
     values:
+      - tailscale:
+          enabled: true
       - rancher:
           hostname: rancher.tailca3979.ts.net
           replicas: 1
@@ -24,16 +28,39 @@ environments:
             extraAnnotations:
               tailscale.com/proxy-group: ingress-proxies
             ingressClassName: tailscale
+      - openwebui:
+          hostname: openwebui.tailca3979.ts.net
+          ingress:
+            enabled: true
+            annotations:
+              tailscale.com/proxy-group: ingress-proxies
+            tls: true
+            class: tailscale
+          openaiBaseApiUrls:
+            - "https://inference.do-ai.run/v1/"
   localhost:
     secrets:
       - environments/localhost/secrets.yaml
     values:
+      - tailscale:
+          enabled: false
       - rancher:
           hostname: rancher.localhost
           replicas: 1
           ingress:
             enabled: true
-
+            extraAnnotations: {}
+            ingressClassName: ""
+      - openwebui:
+          hostname: openwebui.localhost
+          ingress:
+            enabled: true
+            annotations: {}
+            tls: false
+            class: ""
+          openaiBaseApiUrls:
+            - "https://inference.do-ai.run/v1/"
+        
 
 ---
 
@@ -42,9 +69,10 @@ environments:
 releases:
   - name: tailscale
     namespace: tailscale
-    version: "v1.98.4"
+    version: "v1.98.9"
     chart: tailscale/tailscale-operator
     createNamespace: true
+    condition: tailscale.enabled
     values:
       - oauth:
           clientId: {{ .Values.tailscaleClientId | quote }}
@@ -53,6 +81,7 @@ releases:
   - name: tailscale-proxy-group
     namespace: tailscale
     chart: charts/tailscale-proxy-group
+    condition: tailscale.enabled
     wait: true
   - name: cert-manager
     namespace: cert-manager
@@ -75,6 +104,20 @@ releases:
           enabled: {{ .Values.rancher.ingress.enabled }}
           extraAnnotations: {{ .Values.rancher.ingress.extraAnnotations | toYaml | nindent 12 }}
           ingressClassName: {{ .Values.rancher.ingress.ingressClassName | quote }}
+  - name: cnpg
+    namespace: cnpg-system
+    createNamespace: true
+    version: "0.29.0"
+    chart: cnpg/cloudnative-pg
+  - name: openwebui-extras
+    namespace: openwebui
+    chart: charts/openwebui-extras
+    createNamespace: true
+    version: "0.1.0"
+    values:
+      - openwebui:
+          openaiApiKeys: {{ .Values.openwebui.openaiApiKeys | toYaml | nindent 12 }}
+  
   - name: openwebui
     namespace: openwebui
     chart: open-webui/open-webui
@@ -87,7 +130,33 @@ releases:
           enabled: false
       - ingress:
           enabled: true
-          class: tailscale
-          annotations:
-            tailscale.com/proxy-group: ingress-proxies
-      
+          host: {{ .Values.openwebui.hostname | quote }}
+          class: {{ .Values.openwebui.ingress.class | quote }}
+          annotations: {{ .Values.openwebui.ingress.annotations | toYaml | nindent 12 }}
+          tls: {{ .Values.openwebui.ingress.tls }}
+      - openaiBaseApiUrls:
+           {{ .Values.openwebui.openaiBaseApiUrls | toYaml | nindent 12 }}
+      - openaiApiKeysExistingSecret: openwebui-openai-api-keys
+      - openaiApiKeysExistingSecretKey: open-ai-keys
+      - extraEnvVars:
+          - name: DATABASE_TYPE
+            value: postgresql
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: openwebui-extras-cluster-app
+                key: user
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: openwebui-extras-cluster-app
+                key: password
+          - name: DATABASE_HOST
+            value: openwebui-extras-cluster-rw
+          - name: DATABASE_PORT
+            value: "5432"
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: openwebui-extras-cluster-app
+                key: dbname
