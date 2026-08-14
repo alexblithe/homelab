@@ -1,0 +1,10 @@
+apiVersion: v2
+name: openwebui-extras
+description: Creates extra secrets and resources for open-webui
+type: application
+version: 0.1.0
+appVersion: "15.2.0"
+dependencies:
+  - name: cluster
+    version: 0.8.1
+    repository: "@cnpg"

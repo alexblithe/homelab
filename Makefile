@@ -38,7 +38,7 @@ lint-helm:
 
 test-helm:
 	@for chart_dir in charts/*/; do \
-		if [ -d "$$chart_dir/tests" ]; then \
+		if [ -f "$$chart_dir/Chart.yaml" ] && [ -d "$$chart_dir/tests" ]; then \
 			echo "==> Testing $$(basename $$chart_dir)..."; \
 			helm unittest "$$chart_dir"; \
 		fi; \

@@ -1,0 +1,12 @@
+openwebui:
+  openaiApiKeys: []
+
+cluster:
+  type: "postgresql"
+  mode: "standalone"
+  version: 
+    postgresql: "16"
+  cluster:
+    instances: 2
+  backups:
+    enabled: false
