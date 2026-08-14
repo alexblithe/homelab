@@ -7,6 +7,7 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/k3s"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -15,6 +16,7 @@ const k3sImage = "rancher/k3s:v1.27.1-k3s1"
 type k3sTestEnv struct {
 	container      *k3s.K3sContainer
 	client         *kubernetes.Clientset
+	restConfig     *rest.Config
 	kubeConfigPath *string
 }
 
@@ -69,6 +71,7 @@ func newK3sTestEnv(t *testing.T) *k3sTestEnv {
 	return &k3sTestEnv{
 		container:      container,
 		client:         client,
+		restConfig:     restConfig,
 		kubeConfigPath: &kubeConfigPath,
 	}
 }

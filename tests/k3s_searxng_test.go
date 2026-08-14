@@ -1,7 +1,11 @@
 package tests
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"testing"
 
@@ -53,4 +57,44 @@ func TestInstallK3sSearxNG(t *testing.T) {
 	}
 
 	t.Log("SearxNG chart installed successfully in K3s test environment")
+
+	// --- Port-forward to the SearXNG service ---
+	serviceName := "test-searxng"
+	localPort := 8080
+	targetPort := 80
+
+	pf := NewPortForwarder(env.restConfig, env.client, namespace, serviceName, localPort, targetPort)
+	err = pf.Start(t.Context())
+	if err != nil {
+		t.Fatalf("failed to start port-forward: %v", err)
+	}
+	defer pf.Stop()
+
+	t.Logf("Port-forward established: localhost:%d -> %s:%d", localPort, serviceName, targetPort)
+
+	// --- Hit the SearXNG search API ---
+	searchURL := fmt.Sprintf("http://localhost:%d/search?q=test&format=json", localPort)
+	t.Logf("Sending search request to %s", searchURL)
+
+	resp, err := http.Get(searchURL)
+	if err != nil {
+		t.Fatalf("search API request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		t.Fatalf("expected HTTP 200, got %d: %s", resp.StatusCode, string(body))
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("failed to read response body: %v", err)
+	}
+
+	if !json.Valid(body) {
+		t.Fatalf("response body is not valid JSON: %s", string(body))
+	}
+
+	t.Log("SearXNG search API returned valid JSON response")
 }
