@@ -1,0 +1,33 @@
+suite: SearXNG httproute
+templates:
+  - templates/httproute.yaml
+tests:
+  - it: should not create an HTTPRoute by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create an HTTPRoute when enabled
+    set:
+      httpRoute:
+        enabled: true
+    asserts:
+      - isKind:
+          of: HTTPRoute
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-searxng
+      - contains:
+          path: spec.parentRefs
+          content:
+            name: gateway
+            sectionName: http
+      - contains:
+          path: spec.hostnames
+          content: searxng.local
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: RELEASE-NAME-searxng
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 80

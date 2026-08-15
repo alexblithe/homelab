@@ -23,5 +23,8 @@ tests:
           value: |-
             # SearXNG settings file
             search:
+              formats:
+              - html
+              - json
               languages: en
             use_default_settings: true
