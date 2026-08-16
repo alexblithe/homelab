@@ -1,0 +1,28 @@
+suite: SearXNG autoscaling
+templates:
+  - templates/hpa.yaml
+tests:
+  - it: should not create an HPA by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create an HPA when autoscaling is enabled
+    set:
+      autoscaling:
+        enabled: true
+    asserts:
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - equal:
+          path: spec.scaleTargetRef
+          value:
+            apiVersion: apps/v1
+            kind: Deployment
+            name: RELEASE-NAME-searxng
+      - equal:
+          path: spec.minReplicas
+          value: 1
+      - equal:
+          path: spec.maxReplicas
+          value: 100

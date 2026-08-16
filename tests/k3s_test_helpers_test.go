@@ -1,19 +1,23 @@
 package tests
 
 import (
+	"os"
 	"testing"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/k3s"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 const k3sImage = "rancher/k3s:v1.27.1-k3s1"
 
 type k3sTestEnv struct {
-	container *k3s.K3sContainer
-	client    *kubernetes.Clientset
+	container      *k3s.K3sContainer
+	client         *kubernetes.Clientset
+	restConfig     *rest.Config
+	kubeConfigPath *string
 }
 
 func newK3sTestEnv(t *testing.T) *k3sTestEnv {
@@ -49,8 +53,25 @@ func newK3sTestEnv(t *testing.T) *k3sTestEnv {
 		t.Fatalf("failed to create Kubernetes client: %v", err)
 	}
 
+	tempDir := t.TempDir()
+
+	kubeConfigFile, err := os.CreateTemp(tempDir, "kubeconfig-*.yml")
+	if err != nil {
+		t.Fatalf("failed to create temporary kubeconfig file: %v", err)
+	}
+	defer kubeConfigFile.Close()
+
+	_, err = kubeConfigFile.Write(kubeConfig)
+	if err != nil {
+		t.Fatalf("failed to write kubeconfig to temporary file: %v", err)
+	}
+
+	kubeConfigPath := kubeConfigFile.Name()
+
 	return &k3sTestEnv{
-		container: container,
-		client:    client,
+		container:      container,
+		client:         client,
+		restConfig:     restConfig,
+		kubeConfigPath: &kubeConfigPath,
 	}
 }

@@ -40,6 +40,16 @@ environments:
             class: tailscale
           openaiBaseApiUrls:
             - "https://inference.do-ai.run/v1/"
+      - searxng:
+          hostname: searxng.tailca3979.ts.net
+          ingress:
+            enabled: true
+            annotations:
+              tailscale.com/proxy-group: ingress-proxies
+              # In 1.98.9, this will deadlock... https://github.com/tailscale/tailscale/issues/20716
+              # tailscale.com/http-endpoint: enabled 
+            tls: true
+            className: tailscale
   localhost:
     secrets:
       - environments/localhost/secrets.yaml
@@ -62,6 +72,13 @@ environments:
             class: ""
           openaiBaseApiUrls:
             - "https://inference.do-ai.run/v1/"
+      - searxng:
+          hostname: searxng.localhost
+          ingress:
+            enabled: true
+            annotations: {}
+            tls: false
+            className: ""
         
 
 ---
@@ -162,3 +179,19 @@ releases:
               secretKeyRef:
                 name: openwebui-extras-cluster-app
                 key: dbname
+  - name: searxng
+    namespace: searxng
+    chart: charts/searxng
+    createNamespace: true
+    version: 0.1.0
+    values:
+      - ingress:
+          enabled: true
+          className: {{ .Values.searxng.ingress.className | quote }}
+          annotations:
+            {{ .Values.searxng.ingress.annotations | toYaml | nindent 12 }}
+          hosts:
+            - host: {{ .Values.searxng.hostname | quote }}
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific

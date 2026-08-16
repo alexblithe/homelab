@@ -1,0 +1,6 @@
+apiVersion: v2
+name: searxng
+description: A Kubernetes Helm chart for SearXNG, a privacy-respecting metasearch engine
+type: application
+version: 0.1.0
+appVersion: "2026.7.18-277d8469c"
