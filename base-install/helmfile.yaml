@@ -4,6 +4,9 @@ repositories:
   - name: nfd
     oci: true
     url: registry.k8s.io/nfd/charts
+  - name: intel-resource-drivers-for-kubernetes
+    url: ghcr.io/intel/intel-resource-drivers-for-kubernetes
+    oci: true
 
 ---
 
@@ -23,3 +26,16 @@ releases:
           enabled: true
         runtimeClassName: nvidia
         deviceIDStrategy: index
+  - name: intel-gpu-resource-driver
+    chart: intel-resource-drivers-for-kubernetes/intel-gpu-resource-driver-chart
+    namespace: intel-gpu-resource-driver
+    version: "0.11.0"
+    cleanupOnFail: true
+    createNamespace: true
+    wait: true
+    waitForJobs: true
+    values:
+      - kubeletPlugin:
+          privileged: true
+          healthMonitoring:
+            enabled: false
